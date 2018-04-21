@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	<title></title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		
+		html,body{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			font-size: 0.6rem;
+			font-weight: normal;
+			font-style: normal;
+			font-family:"Microsoft YaHei","黑体",Arial,Helvetica,sans-serif,"宋体";
+			color:red;
+		}
+
+		h1,h2,h3{
+			font-size: 0.6rem;
+			font-weight: normal;
+		}
+
+		section{
+			height: 100%;
+		}
+
+		.container{
+			height: 100%;
+		}
+
+		.loading{
+			display: none;
+			position: absolute;
+			width: 4.69rem;
+			height: 4.69rem;
+			left:50%;
+			margin-left: -2.345rem;
+			top:50%;
+			margin-top: -2.345rem;
+			z-index: 3;
+		}
+
+		.circle {
+			background-color: rgba(0,0,0,0);
+			border:0.15625rem solid #252222;
+			opacity:.9;
+			border-right:0.15625rem solid rgba(0,0,0,0);
+			border-left:0.15625rem solid rgba(0,0,0,0);
+			border-radius:3.125rem;
+			box-shadow: 0 0 1.09375rem #161617;
+			width:3.125rem;
+			height:3.125rem;
+			margin:0 auto;
+			-webkit-animation:spinPulse 1s infinite linear;
+		}
+		.circle1 {
+			background-color: rgba(0,0,0,0);
+			border:0.15625rem solid rgba(25, 15, 27, 0.7);
+			opacity:.9;
+			border-left:0.15625rem solid rgba(0,0,0,0);
+			border-right:0.15625rem solid rgba(0,0,0,0);
+			border-radius:2.1875rem;
+			box-shadow: 0 0 0.46875rem #121A21; 
+			width:2.1875rem;
+			height:2.1875rem;
+			margin:0 auto;
+			position:relative;
+			top:-2.96875rem;
+			-webkit-animation:spinoffPulse 1s infinite linear;
+		}
+
+		@-webkit-keyframes spinPulse {
+			0% { -webkit-transform:rotate(160deg); opacity:0; box-shadow:0 0 1px #656467; }
+			50% { -webkit-transform:rotate(145deg); opacity:1;}
+			100% { -webkit-transform:rotate(-320deg); opacity:0; }
+		}
+		@-webkit-keyframes spinoffPulse {
+			0% { -webkit-transform:rotate(0deg); }
+			100% { -webkit-transform:rotate(360deg); }
+		}
+
+		.loading-num{
+			position: absolute;
+			width: 1.25rem;
+			height: 1.25rem;
+			line-height: 1.25rem;
+			left: 50%;
+			margin-left: -0.625rem;
+			top: 50%;
+			text-align: center;
+			margin-top: -1.25rem;
+		}
+
+
+		.popup{
+			display: none;
+			position: absolute;
+			visibility: visible;
+			top:0;
+			left:0;
+			width: 100%;
+			height: 100%;
+			background-color: #BF76E2;
+			background-position:0 center;
+			background-repeat: no-repeat;
+			background-size: contain;
+			transition:all 1s linear 2s;
+			opacity: 1;
+			z-index: 2;
+		}
+
+		.popupFadeout{
+			visibility: hidden;
+			opacity: 0;
+		}
+
+		.page{
+			position: absolute;
+			top:0;
+			left:0;
+			width: 100%;
+			height: 100%;
+			transition:transform .5s ease-out;
+		}
+
+		/*page-index*/
+		.page-index{
+			width: 100%;
+			height: 100%;
+			background: url('img/index_bg.jpg') no-repeat center center #000;
+			background-size: 100% 100%;
+		}
+
+		.page-index-header{
+			position: relative;
+			height: 40px;
+			background-color: #eee;
+		}
+
+		.page-index-header h1{
+			height: 100%;
+			line-height: 40px;
+			text-align: center;
+		}
+
+		.logo{
+			position: absolute;
+			left:10px;
+			top:6px;
+			width: 28px;
+			height: 28px;
+			background: url('img/logo.png') no-repeat 0 0;
+			background-size: contain;
+		}
+
+		.menu{
+			position: absolute;
+			right:10px;
+			top:13px;
+			width: 16px;
+			height: 16px;
+			background: url('img/menu.png') no-repeat 0 0;
+			background-size: contain;
+		}
+
+
+
+
+
+		/*page-index*/
+
+		.page-list{
+			transform:translate3d(100%,0,0);
+			-background-color: red;
+		}
+
+		.page-center{
+			transform:translate3d(100%,0,0);
+		}
+
+		
+		/*page-login*/
+		.page-login{
+			transform:translate3d(100%,0,0);
+		}
+
+		/*page-login*/
+
+
+		.page-broadcast{
+			transform:translate3d(100%,0,0);
+		}
+
+		.page-list-slide{
+			transform:translate3d(0,0,0);
+		}
+
+
+
+	</style>
+	<link rel="stylesheet" href="css/swiper.css">
+	<script>
+		var iWidth=document.documentElement.getBoundingClientRect().width;
+		document.getElementsByTagName("html")[0].style.fontSize=iWidth/10+"px";
+	</script>
+	<script type="text/javascript" src="js/zepto.js"></script>
+	<script type="text/javascript" src="js/swiper.js"></script>
+</head>
+<body>
+	<div id="container" class="container">
+		<div id="loading" class="loading">
+			<div class="circle"></div>
+    		<div class="circle1"></div>
+    		<div id="loading-num" class="loading-num"></div>
+		</div>
+		<div id="popup" class="popup">
+			
+		</div>
+		<section id="page-index" class="page page-index">
+			
+			<div class="page-index-header">
+				<h1>my music</h1>
+				<div id="logo" class="logo"></div>
+				<div id="menu" class="menu"></div>
+			</div>
+			<div data-type="all" class="get-music all-broad" id="all-broad">全部</div>
+			<div data-type="recent" class="get-music recent-broad" id="recent-broad">最近</div>
+			<div data-type="favorite" class="get-music favorite-broad" id="favorite-broad">最爱</div>
+			<div>
+				<h3>类型</h3>
+				<div data-type="xiao" class="get-music">小</div>
+				<div data-type="han" class="get-music">韩</div>
+				<div data-type="yao" class="get-music">摇</div>
+			</div>
+			
+		</section>
+		<section id="page-center" class="page page-center"></section>
+		<section id="page-login" class="page page-login"></section>
+		<section id="page-broadcast" class="page page-broadcast"></section>
+		<section id="page-list" class="page page-list">
+			<div>
+				<div>返回</div>
+				<h3>标题</h3>
+				<div>菜单</div>
+			</div>
+			<div>顺序</div>
+			<div id="page-list-content">
+				
+			</div>
+		</section>
+	</div>
+</body>
+<script id="tpl-music-list" type="text/template">
+	<a href="" class="">{music_type}</a>
+</script>
+
+<script>
+	$(function(){
+		/*定义Key*/
+		var recentKey = 'recentkey';
+		var favoriteKey = 'favoritekey';
+		/*定义Key*/
+
+		/*预加载*/
+		var imgArr = ['img/popup.jpg'];
+		var imgArrLen = imgArr.length;
+
+		/*预加载*/
+
+		/*获取模板*/
+		var tplMusicList = $("#tpl-music-list").html();
+		/*获取模板*/
+
+		/*通用方法*/
+
+		function filter(arr, fn) {
+		    var r = [];
+		    $.each(arr, function(index, val) {
+		        if (fn(val, index)) {
+		            r.push(val);
+		        }
+		    });
+		    return r;
+		}
+
+		function preloadimages(arr){
+		    var newimages = [], loadedimages = 0;
+		    var arr = (typeof arr != "object")?[arr]:arr;
+
+		    function imageloadpost(){
+		        loadedimages++;
+		       	var loadNum = parseInt((loadedimages/imgArrLen)*100);
+		        $("#loading-num").html(loadNum + '%');
+
+		        if (loadedimages == arr.length){
+		           //console.log('图片加载完成');
+		           //$("#loading").css('display','none');
+		           //$("#popup").css('backgroundImage','url(./img/popup.jpg)')
+		           //$("#popup").addClass('popupFadeout');//加载完开屏广告后再消失
+		        }
+		    }
+		    for (var i=0; i<arr.length; i++){
+		        newimages[i] = new Image();
+		        newimages[i].src = arr[i];
+		        newimages[i].onload = function(){
+		            imageloadpost()
+		        }
+		        newimages[i].onerror = function(){
+		             imageloadpost()
+		        }
+		    }
+		}
+
+		/*通用方法*/
+
+		/*start*/
+	
+			//preloadimages(imgArr)
+
+			
+
+			function getMusicList(type,fn){//ajax请求音乐List
+				var type = type;
+				$.getJSON('conf/music_list.json', function(data){
+					musicFilter(type,data,fn);
+				});
+			}
+
+			
+			function musicFilter(type,data,fn){//根据type筛选data
+				var newArr = filter(data,function(item){ //返回新数组
+					return item.music_type == type;
+				});
+				fn(newArr);
+			}
+
+			$(".get-music").on('click',function(){//点击不同类型获取List
+				var musicType = $(this).data('type');
+				getMusicList(musicType,function(data){//渲染List 会回调不同的data数组
+					var listHtml = '';
+					$.each(data,function(index,item){
+						var str = tplMusicList.replace(/\{(\w+)\}/g,function(a,b){
+				            return item[b];
+				        });
+				        listHtml += str;
+					});
+
+			        $("#page-list-content").html(listHtml);
+			        $("#page-list").addClass('page-list-slide');
+					
+				});
+			});
+
+			/*呼起登录*/
+
+			$("#logo").on('click',function(){
+
+			});
+		
+			/*呼起登录*/
+		
+
+
+		/*start*/
+        
+	});
+
+</script>
+</html>

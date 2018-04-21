@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	<title></title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+
+		.cas{
+			border:1px solid #000;
+		}
+	</style>
+</head>
+<body>
+	<input type="range" min="0" max="100" id="volume" value="90">
+	<canvas id="cas" class="cas" width="600" height="500"></canvas>
+	<script>
+		var oV = document.getElementById('volume');
+		var oCas = document.getElementById('cas');
+		var oCw = oCas.width;
+		var oCh = oCas.height;
+		var oCtx = oCas.getContext('2d');
+		var ac = new (window.AudioContext||window.webkitAudioContext)();
+		var bufferSource = ac.createBufferSource();
+		var analyser = ac.createAnalyser();
+		analyser.fftSize = 256;
+		var len = 128;
+		var gainNode = ac[ac.createGain?'createGain':'createGainNode']();
+		analyser.connect(gainNode);
+		gainNode.connect(ac.destination);
+		var w = oCw/len;//4.6
+		console.log(w)
+		function draw(arr){
+			console.log(arr);
+			
+			oCtx.clearRect(0,0,oCw,oCh);
+			for(var i=0;i<len;i++){
+				oCtx.beginPath();
+				oCtx.fillStyle = 'red';
+				oCtx.fillRect(w*i,oCh-(arr[i]/256)*oCh,w*0.8,(arr[i]/256)*oCh);//之所以没有填满是因为后面都是0
+				oCtx.closePath();
+			}
+			
+			
+		}
+
+
+		function ajaxLoad(fn){
+			var xhr = new XMLHttpRequest();
+			xhr.open('get','../media/demo.mp3',true);
+			xhr.responseType = 'arraybuffer';
+			xhr.onload = function(){
+				fn(xhr.response);
+			}
+			xhr.send();
+		}
+
+		ajaxLoad(function(data){
+			//console.dir(data);
+			var arr = data;
+			ac.decodeAudioData(arr,function(buffer){
+				bufferSource.buffer = buffer;
+				bufferSource.connect(analyser);
+				bufferSource[bufferSource.start?'start':'noteOn']();
+				vs();
+				
+			},function(err){
+				console.log(err);
+			});
+		});
+
+		function vs(){
+			var arr = new Uint8Array(analyser.frequencyBinCount);
+
+			function animation(){
+				draw(arr);
+				analyser.getByteFrequencyData(arr);
+				requestAnimationFrame(animation);
+			}
+
+			requestAnimationFrame(animation);
+
+			// function animation(){
+			// 	console.log(arr)
+			// 	analyser.getByteFrequencyData(arr);
+			// }
+
+			// setInterval(animation,1000)
+
+		}
+
+		oV.addEventListener('change',function(){
+			var percent = this.value/this.max;
+			//console.log(percent)
+			gainNode.gain.value = percent*percent;
+		},false);
+
+
+	</script>
+</body>
+</html>
